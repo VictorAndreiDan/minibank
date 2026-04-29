@@ -1,5 +1,7 @@
 package com.minibank;
 
+import java.sql.PreparedStatement;
+
 import java.sql.Connection;
 import java.sql.Statement;
 import java.io.BufferedReader;
@@ -9,10 +11,11 @@ public class VulnController {
 
     // VULNERABILITY 1: SQL Injection (OWASP A03:2021 - Injection)
     public void getUserData(Connection dbConnection, String username) throws Exception {
-        Statement statement = dbConnection.createStatement();
-        // BAD: Directly concatenating user input into a SQL query
-        String query = "SELECT * FROM accounts WHERE username = '" + username + "'";
-        statement.executeQuery(query);
+        // fixed
+        String query = "SELECT * FROM accounts WHERE username = ?";
+        PreparedStatement pstmt = dbConnection.prepareStatement(query);
+        pstmt.setString(1, username);
+        pstmt.executeQuery();
     }
 
     // VULNERABILITY 2: Command Injection (OWASP A03:2021 - Injection)
