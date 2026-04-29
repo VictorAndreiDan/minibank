@@ -10,12 +10,18 @@ import java.io.InputStreamReader;
 public class VulnController {
 
     // VULNERABILITY 1: SQL Injection (OWASP A03:2021 - Injection)
+    // VULNERABILITY 1 FIXED: Using Prepared Statements + Try-With-Resources
     public void getUserData(Connection dbConnection, String username) throws Exception {
-        // fixed
+        
         String query = "SELECT * FROM accounts WHERE username = ?";
-        PreparedStatement pstmt = dbConnection.prepareStatement(query);
-        pstmt.setString(1, username);
-        pstmt.executeQuery();
+        
+        // The try-with-resources block automatically closes the statement when done
+        try (PreparedStatement pstmt = dbConnection.prepareStatement(query)) {
+            
+            pstmt.setString(1, username);
+            pstmt.executeQuery();
+            
+        } // <--- pstmt is automatically closed right here
     }
 
     // VULNERABILITY 2: Command Injection (OWASP A03:2021 - Injection)
